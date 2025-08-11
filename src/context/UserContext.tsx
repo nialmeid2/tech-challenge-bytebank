@@ -61,7 +61,7 @@ export function UserProvider({ children, getLoggedUser, cookieUser, clearLoggedU
         getLoggedUser().
             then(usr => { 
                 setIsLoading(false);
-                console.log(usr)
+                
                 if (usr) { 
                     setUser(usr); // user logged in
                     

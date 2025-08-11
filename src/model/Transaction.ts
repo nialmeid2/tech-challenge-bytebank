@@ -41,20 +41,22 @@ export async function getStatement(userId: number, daysBehind: number, maximumOp
     }
 }
 
-export async function getFilteredTransactions(date: Date | undefined, transactionType : TransactionTypes | undefined, page = 1) {
+export async function getFilteredTransactions(userId: number, date: Date | undefined, transactionType : TransactionTypes | undefined, page = 1) {
     "use server"
 
     try {
+
+        
 
         if (!date && !transactionType) return [];
 
         let where;
         if (!transactionType)
-            where = { createdAt: { gte: date }};
+            where = { createdAt: { gte: date }, userId: userId};
         if (!date)
-            where = { type: transactionType }
+            where = { type: transactionType, userId: userId }
         if (date && transactionType)
-            where = { createdAt: { gte: date }, type: transactionType }
+            where = { createdAt: { gte: date }, type: transactionType, userId: userId }
 
         const transactions = await db.transaction.findMany({
             where,

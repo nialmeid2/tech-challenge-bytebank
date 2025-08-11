@@ -14,14 +14,14 @@ import { FormEvent, useContext, useRef, useState } from "react";
 
 
 export default function OperationsPage({ filterTransactions, removeTransaction }: {
-    filterTransactions: (date: Date | undefined, transactionType: TransactionTypes | undefined, page: number) => Promise<Transaction[]>,
+    filterTransactions: (userId: number, date: Date | undefined, transactionType: TransactionTypes | undefined, page: number) => Promise<Transaction[]>,
     removeTransaction: (transactionId: number) => Promise<string>
 }) {
 
     const dateRef = useRef<HTMLInputElement>(null);
     const typeRef = useRef<HTMLSelectElement>(null);
 
-    const { setIsLoading, refreshPage } = useContext(UserContext);
+    const { setIsLoading, refreshPage, user } = useContext(UserContext);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [lastFilters, setLastFilters] = useState<{ date: Date | undefined, type: TransactionTypes | undefined }>({ date: undefined, type: undefined })
     const [currPage, setCurPage] = useState(1);
@@ -41,7 +41,7 @@ export default function OperationsPage({ filterTransactions, removeTransaction }
         if (!theDate && !theType) return;
 
         setIsLoading(true);
-        filterTransactions(theDate, theType as TransactionTypes | undefined, 1)
+        filterTransactions(user?.id ?? 0, theDate, theType as TransactionTypes | undefined, 1)
             .then((filtered) => {
                 setIsLoading(false);
                 setCurPage(1);
@@ -55,7 +55,7 @@ export default function OperationsPage({ filterTransactions, removeTransaction }
     }
 
     function getNextPage() {
-        filterTransactions(lastFilters.date, lastFilters.type, currPage + 1)
+        filterTransactions(user?.id ?? 0, lastFilters.date, lastFilters.type, currPage + 1)
             .then((newTransactions) => {
                 if (newTransactions.length == 0 || newTransactions.length % transactionsPerPage != 0)
                     setAlreadyEnded(true);
@@ -71,6 +71,7 @@ export default function OperationsPage({ filterTransactions, removeTransaction }
             .then((stmt) => {
 
                 if (stmt) {
+                    setIsLoading(false);
                     const newErrList = {} as Record<number, string>;
                     newErrList[removeId] = stmt;
                     setErrList(el => newErrList);

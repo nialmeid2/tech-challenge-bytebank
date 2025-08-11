@@ -36,4 +36,4 @@ export function getTransactionOptions() {
     </>
 }
 
-export const transactionsPerPage = 30;
+export const transactionsPerPage = 10;

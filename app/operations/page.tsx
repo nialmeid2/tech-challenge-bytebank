@@ -6,9 +6,9 @@ import OperationsPage from "@/src/page/Operations";
 
 export default function Operations() {
 
-    async function filterTransactions(date: Date | undefined, transactionType: TransactionTypes | undefined, page = 1) { 
+    async function filterTransactions(userId: number, date: Date | undefined, transactionType: TransactionTypes | undefined, page = 1) { 
         "use server"
-        return await getFilteredTransactions(date, transactionType, page) as Transaction[]
+        return await getFilteredTransactions(userId, date, transactionType, page) as Transaction[]
     }
 
     async function removeTransaction(transactionId: number) {
